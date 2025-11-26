@@ -152,6 +152,27 @@ function SaleContent() {
     return "from-gray-500 to-slate-600";
   };
 
+  // Check if price should be displayed
+  // - Seed/Private: Never show publicly (private pricing for eligible participants only)
+  // - Public: Only show when active
+  const isPrivateRound = (name: string) => {
+    const lower = name.toLowerCase();
+    return lower.includes("seed") || lower.includes("private");
+  };
+
+  const shouldShowPrice = (pool: typeof currentPool) => {
+    if (!pool) return false;
+    if (isPrivateRound(pool.name)) return false;
+    return pool.isActive; // Public round shows price only when active
+  };
+
+  const getPriceDisplay = (pool: typeof currentPool) => {
+    if (!pool) return "N/A";
+    if (isPrivateRound(pool.name)) return "Private";
+    if (!pool.isActive) return "TBA";
+    return `$${(Number(pool.pricePerToken) / 1e6).toFixed(4)}`;
+  };
+
   return (
     <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -218,7 +239,10 @@ function SaleContent() {
                       <div>
                         <h3 className="font-medium">{pool.name}</h3>
                         <p className="text-xs text-white/50">
-                          ${(Number(pool.pricePerToken) / 1e6).toFixed(4)} per token
+                          {shouldShowPrice(pool)
+                            ? `${getPriceDisplay(pool)} per token`
+                            : <span className="italic">{getPriceDisplay(pool)}</span>
+                          }
                         </p>
                       </div>
                     </div>
@@ -246,8 +270,8 @@ function SaleContent() {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="p-3 bg-white/5 rounded-lg">
                       <p className="text-xs text-white/50 mb-1">Price</p>
-                      <p className="font-medium">
-                        ${(Number(currentPool.pricePerToken) / 1e6).toFixed(4)}
+                      <p className={`font-medium ${!shouldShowPrice(currentPool) ? "italic text-white/50" : ""}`}>
+                        {getPriceDisplay(currentPool)}
                       </p>
                     </div>
                     <div className="p-3 bg-white/5 rounded-lg">
@@ -312,9 +336,15 @@ function SaleContent() {
                   <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-lg mb-6">
                     <div className="flex justify-between items-center">
                       <span className="text-white/60">You will receive</span>
-                      <span className="text-xl font-bold text-indigo-400">
-                        {calculateTokens()} {projectConfig.tokenSymbol}
-                      </span>
+                      {shouldShowPrice(currentPool) ? (
+                        <span className="text-xl font-bold text-indigo-400">
+                          {calculateTokens()} {projectConfig.tokenSymbol}
+                        </span>
+                      ) : (
+                        <span className="text-sm italic text-white/50">
+                          Amount calculated at contribution
+                        </span>
+                      )}
                     </div>
                   </div>
 

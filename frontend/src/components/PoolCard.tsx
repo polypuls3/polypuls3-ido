@@ -36,6 +36,17 @@ export function PoolCard({ pool, poolId }: PoolCardProps) {
   // Price in USD (6 decimals for USDC precision)
   const priceUSD = Number(pool.pricePerToken) / 1e6;
 
+  // Check if price should be displayed
+  // - Seed/Private: Never show (private pricing)
+  // - Public: Only show when active
+  const isPrivateRound = pool.name.toLowerCase().includes("seed") ||
+                         pool.name.toLowerCase().includes("private");
+  const isPublicRound = pool.name.toLowerCase().includes("public");
+  const shouldShowPrice = pool.isPurchasable &&
+                          pool.pricePerToken > 0 &&
+                          !isPrivateRound &&
+                          (isPublicRound ? pool.isActive : true);
+
   // Format large numbers
   const formatTokens = (value: bigint) => {
     const num = Number(formatEther(value));
@@ -105,7 +116,13 @@ export function PoolCard({ pool, poolId }: PoolCardProps) {
         {pool.isPurchasable && pool.pricePerToken > 0 && (
           <div className="flex justify-between">
             <span className="text-white/60">Price</span>
-            <span className="text-white/90">${priceUSD.toFixed(4)}</span>
+            {shouldShowPrice ? (
+              <span className="text-white/90">${priceUSD.toFixed(4)}</span>
+            ) : isPrivateRound ? (
+              <span className="text-white/50 italic text-xs">Private</span>
+            ) : (
+              <span className="text-white/50 italic text-xs">TBA</span>
+            )}
           </div>
         )}
         <div className="flex justify-between">

@@ -45,8 +45,23 @@ export default function Tokenomics() {
     cliffMonths: Number(pool.vesting.cliffDuration) / SECONDS_PER_MONTH,
     vestingMonths: Number(pool.vesting.vestingDuration) / SECONDS_PER_MONTH,
     isPurchasable: pool.isPurchasable,
+    isActive: pool.isActive,
     priceUSD: pool.pricePerToken > 0 ? Number(pool.pricePerToken) / 1e6 : null,
   })) || [];
+
+  // Check if price should be displayed
+  // - Seed/Private: Never show publicly
+  // - Public: Only show when active
+  const getPriceDisplay = (pool: typeof vestingData[0]) => {
+    const lower = pool.name.toLowerCase();
+    const isPrivateRound = lower.includes("seed") || lower.includes("private");
+    const isPublicRound = lower.includes("public");
+
+    if (!pool.priceUSD) return "N/A";
+    if (isPrivateRound) return "Private";
+    if (isPublicRound && !pool.isActive) return "TBA";
+    return `$${pool.priceUSD.toFixed(4)}`;
+  };
 
   const formatNumber = (num: number) => {
     if (num >= 1_000_000_000) return `${(num / 1_000_000_000).toFixed(2)}B`;
@@ -194,7 +209,9 @@ export default function Tokenomics() {
                     </td>
                     <td className="py-4">{formatNumber(pool.allocation)}</td>
                     <td className="py-4">
-                      {pool.priceUSD ? `$${pool.priceUSD.toFixed(4)}` : "N/A"}
+                      <span className={getPriceDisplay(pool) === "Private" || getPriceDisplay(pool) === "TBA" ? "italic text-white/50" : ""}>
+                        {getPriceDisplay(pool)}
+                      </span>
                     </td>
                     <td className="py-4">
                       <span className={pool.tgePercent > 0 ? "text-green-400" : ""}>
