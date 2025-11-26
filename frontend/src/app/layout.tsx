@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,12 +25,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white`}>
+      <body className={`${inter.variable} font-sans antialiased bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white flex flex-col`}>
         <Providers>
           <Navbar />
-          <main className="pt-16">
+          <main className="pt-16 flex-1">
             {children}
           </main>
+          <Footer />
         </Providers>
       </body>
     </html>

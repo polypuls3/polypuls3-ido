@@ -6,7 +6,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { projectConfig } from "@/config/project";
 
 const navLinks = [
-  { href: "/", label: "Dashboard" },
+  { href: "/", label: "Home" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/tokenomics", label: "Tokenomics" },
   { href: "/sale", label: "Sale" },
   { href: "/my-allocations", label: "My Allocations" },
