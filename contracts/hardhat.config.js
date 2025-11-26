@@ -17,7 +17,7 @@ module.exports = {
       chainId: 31337,
     },
     polygonAmoy: {
-      url: process.env.ALCHEMY_AMOY_URL || "https://rpc-amoy.polygon.technology",
+      url: process.env.ALCHEMY_AMOY_URL || "https://polygon-amoy-bor-rpc.publicnode.com",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 80002,
     },
