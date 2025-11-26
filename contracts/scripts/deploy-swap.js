@@ -27,23 +27,16 @@ async function main() {
   // USDC rate: 10000 = 0.01 USDC per PULSE ($0.01 price)
   const initialUsdcRate = 10000;
 
-  // POL rate: 1e16 = 0.01 POL per PULSE
-  // At POL price of ~$0.50, this means PULSE = $0.005 in POL terms
-  // Adjust based on desired POL/PULSE ratio
-  const initialPolRate = hre.ethers.parseUnits("0.01", 18); // 0.01 POL per PULSE
-
   console.log("\nDeploying PulseSwap...");
   console.log("PULSE Token:", pulseTokenAddress);
   console.log("USDC Token:", usdcAddress);
   console.log("Initial USDC Rate:", initialUsdcRate, "(0.01 USDC per PULSE)");
-  console.log("Initial POL Rate:", initialPolRate.toString(), "(0.01 POL per PULSE)");
 
   const PulseSwap = await hre.ethers.getContractFactory("PulseSwap");
   const pulseSwap = await PulseSwap.deploy(
     pulseTokenAddress,
     usdcAddress,
-    initialUsdcRate,
-    initialPolRate
+    initialUsdcRate
   );
 
   await pulseSwap.waitForDeployment();
@@ -57,7 +50,6 @@ async function main() {
   deployment.swapConfig = {
     usdcAddress,
     initialUsdcRate: initialUsdcRate.toString(),
-    initialPolRate: initialPolRate.toString(),
   };
   deployment.deployedAt = new Date().toISOString();
 
@@ -66,7 +58,7 @@ async function main() {
 
   // Verify contract (optional)
   console.log("\nTo verify on Polygonscan:");
-  console.log(`npx hardhat verify --network polygonAmoy ${pulseSwapAddress} ${pulseTokenAddress} ${usdcAddress} ${initialUsdcRate} ${initialPolRate}`);
+  console.log(`npx hardhat verify --network polygonAmoy ${pulseSwapAddress} ${pulseTokenAddress} ${usdcAddress} ${initialUsdcRate}`);
 
   console.log("\n========================================");
   console.log("NEXT STEPS:");
@@ -77,11 +69,8 @@ async function main() {
   console.log("\n2. Fund the swap contract with USDC (for PULSE → USDC swaps):");
   console.log(`   - Approve PulseSwap to spend USDC`);
   console.log(`   - Call depositUsdc(amount)`);
-  console.log("\n3. Fund the swap contract with POL (for PULSE → POL swaps):");
-  console.log(`   - Call depositPol() with value`);
-  console.log("\n4. Adjust rates if needed:");
+  console.log("\n3. Adjust rate if needed:");
   console.log(`   - Call setUsdcRate(newRate)`);
-  console.log(`   - Call setPolRate(newRate)`);
 }
 
 main()
