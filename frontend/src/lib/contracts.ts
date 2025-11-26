@@ -1,3 +1,28 @@
+// Chain-indexed contract addresses
+export const contractAddresses: Record<number, {
+  pulseToken: `0x${string}` | undefined;
+  pulseIDO: `0x${string}` | undefined;
+  usdc: `0x${string}` | undefined;
+}> = {
+  // Polygon Amoy (testnet)
+  80002: {
+    pulseToken: "0x25718cf963455f09081EA27C5DfAd6CE4CF4292C",
+    pulseIDO: "0xE706e943285149167234590Fb765d9DcEBa2947B",
+    usdc: "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+  },
+  // Polygon Mainnet
+  137: {
+    pulseToken: undefined, // Placeholder - deploy later
+    pulseIDO: undefined,
+    usdc: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359", // Official USDC on Polygon
+  },
+};
+
+// Helper to get addresses for current chain
+export function getContractAddresses(chainId: number) {
+  return contractAddresses[chainId] || contractAddresses[80002]; // fallback to Amoy
+}
+
 // Contract ABIs (extracted from compiled contracts)
 
 export const pulseTokenABI = [

@@ -2,12 +2,14 @@
 
 import { useReadContract } from "wagmi";
 import { projectConfig } from "@/config/project";
-import { contractAddresses } from "@/lib/wagmi";
+import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { pulseIDOABI } from "@/lib/contracts";
 import { PoolCard } from "@/components/PoolCard";
 import { StatsCard } from "@/components/StatsCard";
 
 export default function Dashboard() {
+  const contractAddresses = useContractAddresses();
+
   // Fetch all pools from contract
   const { data: pools, isLoading: poolsLoading } = useReadContract({
     address: contractAddresses.pulseIDO,
@@ -116,8 +118,11 @@ export default function Dashboard() {
 
         {!contractAddresses.pulseIDO ? (
           <div className="glass-card p-8 text-center">
+            <div className="bg-yellow-500/20 text-yellow-400 p-4 rounded-lg mb-4">
+              Contracts not yet deployed on this network. Please switch to Polygon Amoy for testing.
+            </div>
             <p className="text-white/60">
-              Contract not deployed yet. Configure the environment variables to connect.
+              Use the network selector in the top right to switch networks.
             </p>
           </div>
         ) : poolsLoading ? (

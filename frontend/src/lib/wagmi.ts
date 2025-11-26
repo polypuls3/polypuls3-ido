@@ -36,13 +36,3 @@ export const config = getDefaultConfig({
   ],
   ssr: true,
 });
-
-// Contract addresses (loaded from environment)
-export const contractAddresses = {
-  pulseToken: process.env.NEXT_PUBLIC_PULSE_TOKEN_ADDRESS as `0x${string}` | undefined,
-  pulseIDO: process.env.NEXT_PUBLIC_PULSE_IDO_ADDRESS as `0x${string}` | undefined,
-  usdc: process.env.NEXT_PUBLIC_USDC_ADDRESS as `0x${string}` | undefined,
-};
-
-// Chain ID
-export const activeChainId = parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "80002");

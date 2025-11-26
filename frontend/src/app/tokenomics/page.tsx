@@ -4,7 +4,7 @@ import { useReadContract } from "wagmi";
 import { formatEther } from "viem";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { projectConfig } from "@/config/project";
-import { contractAddresses } from "@/lib/wagmi";
+import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { pulseIDOABI } from "@/lib/contracts";
 
 const COLORS = ["#f59e0b", "#6366f1", "#0ea5e9", "#10b981", "#8b5cf6", "#ec4899"];
@@ -12,6 +12,8 @@ const COLORS = ["#f59e0b", "#6366f1", "#0ea5e9", "#10b981", "#8b5cf6", "#ec4899"
 const SECONDS_PER_MONTH = 30 * 24 * 60 * 60;
 
 export default function Tokenomics() {
+  const contractAddresses = useContractAddresses();
+
   // Fetch all pools from contract
   const { data: pools, isLoading } = useReadContract({
     address: contractAddresses.pulseIDO,

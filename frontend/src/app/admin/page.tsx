@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { formatEther, parseEther } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { contractAddresses } from "@/lib/wagmi";
+import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { pulseIDOABI, erc20ABI } from "@/lib/contracts";
 import { projectConfig } from "@/config/project";
 
@@ -12,6 +12,7 @@ const SECONDS_PER_MONTH = 30 * 24 * 60 * 60;
 
 export default function AdminPage() {
   const { address, isConnected } = useAccount();
+  const contractAddresses = useContractAddresses();
   const [tgeDate, setTgeDate] = useState("");
   const [tgeTime, setTgeTime] = useState("");
   const [allocationPoolId, setAllocationPoolId] = useState("0");
@@ -205,7 +206,12 @@ export default function AdminPage() {
           </div>
         ) : !contractAddresses.pulseIDO ? (
           <div className="glass-card p-8 text-center">
-            <p className="text-white/60">Contract not deployed yet.</p>
+            <div className="bg-yellow-500/20 text-yellow-400 p-4 rounded-lg mb-4">
+              Contracts not yet deployed on this network. Please switch to Polygon Amoy for testing.
+            </div>
+            <p className="text-white/60">
+              Use the network selector in the top right to switch networks.
+            </p>
           </div>
         ) : !isOwner ? (
           <div className="glass-card p-8 text-center">

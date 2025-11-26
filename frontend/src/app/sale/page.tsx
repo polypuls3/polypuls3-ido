@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { formatEther, parseUnits } from "viem";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { contractAddresses } from "@/lib/wagmi";
+import { useContractAddresses } from "@/hooks/useContractAddresses";
 import { pulseIDOABI, erc20ABI } from "@/lib/contracts";
 import { projectConfig } from "@/config/project";
 
@@ -19,6 +19,7 @@ function SaleContent() {
   const [needsApproval, setNeedsApproval] = useState(true);
 
   const { address, isConnected } = useAccount();
+  const contractAddresses = useContractAddresses();
 
   // Fetch pools
   const { data: pools, isLoading: poolsLoading } = useReadContract({
@@ -171,8 +172,11 @@ function SaleContent() {
           </div>
         ) : !contractAddresses.pulseIDO ? (
           <div className="glass-card p-8 text-center">
+            <div className="bg-yellow-500/20 text-yellow-400 p-4 rounded-lg mb-4">
+              Contracts not yet deployed on this network. Please switch to Polygon Amoy for testing.
+            </div>
             <p className="text-white/60">
-              Contract not deployed yet. Configure the environment variables to connect.
+              Use the network selector in the top right to switch networks.
             </p>
           </div>
         ) : poolsLoading ? (
