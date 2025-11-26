@@ -1,0 +1,18 @@
+{
+  "name": "polypuls3-ido-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for Polypuls3 IDO platform",
+  "license": "MIT",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js --network",
+    "configure": "npx hardhat run scripts/configure-pools.js --network"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "hardhat": "^2.19.1"
+  }
+}

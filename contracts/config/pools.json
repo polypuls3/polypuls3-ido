@@ -1,0 +1,58 @@
+{
+  "pools": [
+    {
+      "name": "Seed Sale",
+      "hardCap": "35000000000000000000000000",
+      "pricePerToken": "3000",
+      "tgePercent": 0,
+      "cliffMonths": 12,
+      "vestingMonths": 24,
+      "isPurchasable": true
+    },
+    {
+      "name": "Private Sale",
+      "hardCap": "50000000000000000000000000",
+      "pricePerToken": "5000",
+      "tgePercent": 0,
+      "cliffMonths": 6,
+      "vestingMonths": 18,
+      "isPurchasable": true
+    },
+    {
+      "name": "Public Sale",
+      "hardCap": "100000000000000000000000000",
+      "pricePerToken": "10000",
+      "tgePercent": 20,
+      "cliffMonths": 1,
+      "vestingMonths": 6,
+      "isPurchasable": true
+    },
+    {
+      "name": "Team",
+      "hardCap": "100000000000000000000000000",
+      "pricePerToken": "0",
+      "tgePercent": 0,
+      "cliffMonths": 24,
+      "vestingMonths": 36,
+      "isPurchasable": false
+    },
+    {
+      "name": "Advisors",
+      "hardCap": "25000000000000000000000000",
+      "pricePerToken": "0",
+      "tgePercent": 0,
+      "cliffMonths": 12,
+      "vestingMonths": 24,
+      "isPurchasable": false
+    },
+    {
+      "name": "Liquidity",
+      "hardCap": "40000000000000000000000000",
+      "pricePerToken": "0",
+      "tgePercent": 100,
+      "cliffMonths": 0,
+      "vestingMonths": 0,
+      "isPurchasable": false
+    }
+  ]
+}
