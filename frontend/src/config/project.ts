@@ -6,7 +6,7 @@ export const projectConfig = {
   logo: "/logo.svg",
 
   // Links
-  website: "https://polypuls3.io",
+  website: "https://polypuls3.vercel.app",
   twitter: "https://twitter.com/polypuls3",
   telegram: "https://t.me/polypuls3",
   discord: "https://discord.gg/polypuls3",

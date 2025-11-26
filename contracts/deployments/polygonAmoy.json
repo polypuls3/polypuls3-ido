@@ -3,8 +3,8 @@
   "chainId": "80002",
   "deployer": "0x5F565baE36bd373797afc1682a627Cc05CC28600",
   "contracts": {
-    "PulseToken": "0xBD2DD8A7077d88Cf32cb3536ee1a14A208B71D84",
-    "PulseIDO": "0xDC6E8482A3292BEd6e86b73B6a39abD60076165F"
+    "PulseToken": "0x25718cf963455f09081EA27C5DfAd6CE4CF4292C",
+    "PulseIDO": "0xE706e943285149167234590Fb765d9DcEBa2947B"
   },
-  "timestamp": "2025-11-26T13:27:05.993Z"
+  "timestamp": "2025-11-26T14:12:03.327Z"
 }

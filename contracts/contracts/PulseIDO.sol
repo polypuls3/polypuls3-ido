@@ -177,9 +177,11 @@ contract PulseIDO is Ownable, ReentrancyGuard, Pausable {
     /**
      * @dev Set the TGE (Token Generation Event) timestamp
      * @param _tgeTime Unix timestamp for TGE
+     * @notice Can only be changed before TGE has passed
      */
     function setTGETime(uint256 _tgeTime) external onlyOwner {
         require(_tgeTime > 0, "PulseIDO: TGE time must be greater than 0");
+        require(tgeTime == 0 || block.timestamp < tgeTime, "PulseIDO: TGE already passed");
         tgeTime = _tgeTime;
         emit TGETimeSet(_tgeTime);
     }
