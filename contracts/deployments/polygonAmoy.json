@@ -4,7 +4,17 @@
   "deployer": "0x5F565baE36bd373797afc1682a627Cc05CC28600",
   "contracts": {
     "PulseToken": "0x25718cf963455f09081EA27C5DfAd6CE4CF4292C",
-    "PulseIDO": "0xE706e943285149167234590Fb765d9DcEBa2947B"
+    "PulseIDO": "0xE706e943285149167234590Fb765d9DcEBa2947B",
+    "PulseSwap": "0x96F07b406C02b0225C02B002d7470b8Ab769b559",
+    "PulseSwapImplementation": "0xAEE84709896CDe3217b9Ca10C7c10a28df95A9C8"
   },
-  "timestamp": "2025-11-26T14:12:03.327Z"
+  "timestamp": "2025-11-26T14:12:03.327Z",
+  "swapConfig": {
+    "usdcAddress": "0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582",
+    "initialUsdcRate": "10000",
+    "initialSwapFeeBps": "250",
+    "proxyType": "UUPS",
+    "version": "1.0.0"
+  },
+  "deployedAt": "2025-11-27T01:10:22.436Z"
 }
