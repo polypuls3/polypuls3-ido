@@ -1,0 +1,195 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x96F07b406C02b0225C02B002d7470b8Ab769b559",
+      "txHash": "0x70d3628ddd785b4685d66603480571ca1b6a5f1e77173de903756d0239073604",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "8aeaf201d6a334a95f70a0bf941dab00e3f3e49b05f823339794933cb6c2223e": {
+      "address": "0xAEE84709896CDe3217b9Ca10C7c10a28df95A9C8",
+      "txHash": "0xbdfa14ca18abef305d26a1b724a9914ada6f8294a888e97ec7d4dc6343c466f7",
+      "layout": {
+        "solcVersion": "0.8.24",
+        "storage": [
+          {
+            "label": "pulseToken",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_contract(IERC20)2282",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:29"
+          },
+          {
+            "label": "usdcToken",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_contract(IERC20)2282",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:30"
+          },
+          {
+            "label": "usdcRate",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:35"
+          },
+          {
+            "label": "swapFeeBps",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:38"
+          },
+          {
+            "label": "accumulatedPulseFees",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:43"
+          },
+          {
+            "label": "accumulatedUsdcFees",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256",
+            "contract": "PulseSwapV1",
+            "src": "contracts/PulseSwapV1.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)73_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)224_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ReentrancyGuardStorage)288_storage": {
+            "label": "struct ReentrancyGuardUpgradeable.ReentrancyGuardStorage",
+            "members": [
+              {
+                "label": "_status",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_contract(IERC20)2282": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ReentrancyGuard": [
+            {
+              "contract": "ReentrancyGuardUpgradeable",
+              "label": "_status",
+              "type": "t_uint256",
+              "src": "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol:43",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

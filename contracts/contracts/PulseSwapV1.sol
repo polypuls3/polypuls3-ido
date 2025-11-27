@@ -3,22 +3,31 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 /**
- * @title PulseSwap
+ * @title PulseSwapV1
  * @dev A simple fixed-rate token swap contract for PULSE tokens.
  * Allows bidirectional swaps between PULSE and USDC at admin-set rates.
  * Includes a configurable swap fee.
+ * Uses UUPS upgradeable pattern.
  */
-contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
+contract PulseSwapV1 is
+    Initializable,
+    OwnableUpgradeable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable
+{
     using SafeERC20 for IERC20;
 
     // Token addresses
-    IERC20 public immutable pulseToken;
-    IERC20 public immutable usdcToken;
+    IERC20 public pulseToken;
+    IERC20 public usdcToken;
 
     // Exchange rates (scaled)
     // usdcRate: USDC amount per PULSE (scaled by 1e6, since USDC has 6 decimals)
@@ -45,21 +54,46 @@ contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
     event UsdcWithdrawn(uint256 amount);
     event FeesWithdrawn(uint256 pulseAmount, uint256 usdcAmount);
 
-    constructor(
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    /**
+     * @dev Initializes the contract (replaces constructor for upgradeable contracts)
+     */
+    function initialize(
         address _pulseToken,
         address _usdcToken,
         uint256 _initialUsdcRate,
         uint256 _initialSwapFeeBps
-    ) Ownable(msg.sender) {
+    ) public initializer {
         require(_pulseToken != address(0), "PulseSwap: Invalid PULSE address");
         require(_usdcToken != address(0), "PulseSwap: Invalid USDC address");
         require(_initialUsdcRate > 0, "PulseSwap: USDC rate must be > 0");
         require(_initialSwapFeeBps <= MAX_FEE_BPS, "PulseSwap: Fee too high");
 
+        __Ownable_init(msg.sender);
+        __Pausable_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+
         pulseToken = IERC20(_pulseToken);
         usdcToken = IERC20(_usdcToken);
         usdcRate = _initialUsdcRate;
         swapFeeBps = _initialSwapFeeBps;
+    }
+
+    /**
+     * @dev Required by UUPS pattern - only owner can upgrade
+     */
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+    /**
+     * @dev Returns the contract version
+     */
+    function version() public pure virtual returns (string memory) {
+        return "1.0.0";
     }
 
     // ============ User Swap Functions ============
@@ -183,14 +217,16 @@ contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
      * @dev Get contract's PULSE balance (excluding accumulated fees)
      */
     function getPulseBalance() external view returns (uint256) {
-        return pulseToken.balanceOf(address(this)) - accumulatedPulseFees;
+        uint256 total = pulseToken.balanceOf(address(this));
+        return total > accumulatedPulseFees ? total - accumulatedPulseFees : 0;
     }
 
     /**
      * @dev Get contract's USDC balance (excluding accumulated fees)
      */
     function getUsdcBalance() external view returns (uint256) {
-        return usdcToken.balanceOf(address(this)) - accumulatedUsdcFees;
+        uint256 total = usdcToken.balanceOf(address(this));
+        return total > accumulatedUsdcFees ? total - accumulatedUsdcFees : 0;
     }
 
     /**
@@ -270,7 +306,8 @@ contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
      */
     function withdrawPulse(uint256 amount) external onlyOwner {
         require(amount > 0, "PulseSwap: Amount must be > 0");
-        require(pulseToken.balanceOf(address(this)) >= amount, "PulseSwap: Insufficient balance");
+        uint256 available = pulseToken.balanceOf(address(this)) - accumulatedPulseFees;
+        require(available >= amount, "PulseSwap: Insufficient balance");
         pulseToken.safeTransfer(msg.sender, amount);
         emit PulseWithdrawn(amount);
     }
@@ -281,7 +318,8 @@ contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
      */
     function withdrawUsdc(uint256 amount) external onlyOwner {
         require(amount > 0, "PulseSwap: Amount must be > 0");
-        require(usdcToken.balanceOf(address(this)) >= amount, "PulseSwap: Insufficient balance");
+        uint256 available = usdcToken.balanceOf(address(this)) - accumulatedUsdcFees;
+        require(available >= amount, "PulseSwap: Insufficient balance");
         usdcToken.safeTransfer(msg.sender, amount);
         emit UsdcWithdrawn(amount);
     }
@@ -306,6 +344,10 @@ contract PulseSwap is Ownable, Pausable, ReentrancyGuard {
     function emergencyWithdrawAll() external onlyOwner {
         uint256 pulseBalance = pulseToken.balanceOf(address(this));
         uint256 usdcBalance = usdcToken.balanceOf(address(this));
+
+        // Reset accumulated fees since we're withdrawing everything
+        accumulatedPulseFees = 0;
+        accumulatedUsdcFees = 0;
 
         if (pulseBalance > 0) {
             pulseToken.safeTransfer(msg.sender, pulseBalance);

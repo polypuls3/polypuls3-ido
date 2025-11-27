@@ -4,7 +4,7 @@ const path = require("path");
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
-  console.log("Deploying PulseSwap with account:", deployer.address);
+  console.log("Deploying PulseSwapV1 (Upgradeable) with account:", deployer.address);
   console.log("Account balance:", (await hre.ethers.provider.getBalance(deployer.address)).toString());
 
   // Load existing deployment to get PULSE token address
@@ -30,56 +30,70 @@ async function main() {
   // Swap fee: 250 basis points = 2.5%
   const initialSwapFeeBps = 250;
 
-  console.log("\nDeploying PulseSwap...");
+  console.log("\nDeploying PulseSwapV1 as UUPS Proxy...");
   console.log("PULSE Token:", pulseTokenAddress);
   console.log("USDC Token:", usdcAddress);
   console.log("Initial USDC Rate:", initialUsdcRate, "(0.01 USDC per PULSE)");
   console.log("Initial Swap Fee:", initialSwapFeeBps / 100, "%");
 
-  const PulseSwap = await hre.ethers.getContractFactory("PulseSwap");
-  const pulseSwap = await PulseSwap.deploy(
-    pulseTokenAddress,
-    usdcAddress,
-    initialUsdcRate,
-    initialSwapFeeBps
+  const PulseSwapV1 = await hre.ethers.getContractFactory("PulseSwapV1");
+
+  // Deploy as UUPS proxy
+  const pulseSwap = await hre.upgrades.deployProxy(
+    PulseSwapV1,
+    [pulseTokenAddress, usdcAddress, initialUsdcRate, initialSwapFeeBps],
+    {
+      initializer: "initialize",
+      kind: "uups"
+    }
   );
 
   await pulseSwap.waitForDeployment();
-  const pulseSwapAddress = await pulseSwap.getAddress();
+  const proxyAddress = await pulseSwap.getAddress();
 
-  console.log("\nPulseSwap deployed to:", pulseSwapAddress);
+  // Get implementation address
+  const implementationAddress = await hre.upgrades.erc1967.getImplementationAddress(proxyAddress);
+
+  console.log("\n========================================");
+  console.log("DEPLOYMENT COMPLETE");
+  console.log("========================================");
+  console.log("Proxy Address:", proxyAddress);
+  console.log("Implementation Address:", implementationAddress);
+  console.log("Version:", await pulseSwap.version());
 
   // Update deployment file
   deployment.contracts = deployment.contracts || {};
-  deployment.contracts.PulseSwap = pulseSwapAddress;
+  deployment.contracts.PulseSwap = proxyAddress;
+  deployment.contracts.PulseSwapImplementation = implementationAddress;
   deployment.swapConfig = {
     usdcAddress,
     initialUsdcRate: initialUsdcRate.toString(),
     initialSwapFeeBps: initialSwapFeeBps.toString(),
+    proxyType: "UUPS",
+    version: "1.0.0",
   };
   deployment.deployedAt = new Date().toISOString();
 
   fs.writeFileSync(deploymentPath, JSON.stringify(deployment, null, 2));
   console.log("\nDeployment info saved to:", deploymentPath);
 
-  // Verify contract (optional)
-  console.log("\nTo verify on Polygonscan:");
-  console.log(`npx hardhat verify --network polygonAmoy ${pulseSwapAddress} ${pulseTokenAddress} ${usdcAddress} ${initialUsdcRate} ${initialSwapFeeBps}`);
+  // Verify contracts
+  console.log("\nTo verify the implementation contract on Polygonscan:");
+  console.log(`npx hardhat verify --network polygonAmoy ${implementationAddress}`);
 
   console.log("\n========================================");
   console.log("NEXT STEPS:");
   console.log("========================================");
-  console.log("1. Fund the swap contract with PULSE tokens:");
+  console.log("1. Update frontend with new contract address:", proxyAddress);
+  console.log("\n2. Fund the swap contract with PULSE tokens:");
   console.log(`   - Approve PulseSwap to spend PULSE`);
   console.log(`   - Call depositPulse(amount)`);
-  console.log("\n2. Fund the swap contract with USDC (for PULSE → USDC swaps):");
+  console.log("\n3. Fund the swap contract with USDC (for PULSE → USDC swaps):");
   console.log(`   - Approve PulseSwap to spend USDC`);
   console.log(`   - Call depositUsdc(amount)`);
-  console.log("\n3. Adjust rate or fee if needed:");
-  console.log(`   - Call setUsdcRate(newRate)`);
-  console.log(`   - Call setSwapFee(newFeeBps) // 250 = 2.5%`);
-  console.log("\n4. Withdraw accumulated fees:");
-  console.log(`   - Call withdrawFees()`);
+  console.log("\n4. To upgrade in the future:");
+  console.log(`   - Create PulseSwapV2.sol with new features`);
+  console.log(`   - Run: npx hardhat run scripts/upgrade-swap.js --network polygonAmoy`);
 }
 
 main()
